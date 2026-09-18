@@ -18,15 +18,30 @@
                 <p class="sidebar-description">Acompanhe seus gastos de forma simples e clara.</p>
             </div>
 
+            <section class="total-card salary-card" aria-labelledby="salario-titulo">
+                <label for="salario" id="salario-titulo" class="section-label">Seu salário mensal</label>
+                <div class="salary-input-wrapper">
+                    <span>R$</span>
+                    <input id="salario" name="salario" type="number" min="0" step="0.01" placeholder="0,00"
+                        inputmode="decimal" />
+                </div>
+                <p class="salary-hint">Salvo automaticamente neste dispositivo.</p>
+            </section>
+
             <section class="total-card" aria-labelledby="total-titulo">
                 <span id="total-titulo" class="section-label">Total geral</span>
                 <strong id="total-geral">R$ 0,00</strong>
             </section>
 
+            <section class="total-card" aria-labelledby="saldo-titulo">
+                <span id="saldo-titulo" class="section-label">Saldo após despesas</span>
+                <strong id="saldo-disponivel">R$ 0,00</strong>
+            </section>
+
             <section class="category-summary" aria-labelledby="categorias-titulo">
                 <div class="section-heading">
                     <h2 id="categorias-titulo">Por categoria</h2>
-                    <span class="category-count">5 categorias</span>
+                    <span class="category-count">6 categorias</span>
                 </div>
                 <ul id="totais-por-categoria" class="category-list">
                     <li class="category-total" data-category="alimento">
@@ -44,6 +59,9 @@
                     <li class="category-total" data-category="outros">
                         <span>Outros</span><strong data-category-total="outros">R$ 0,00</strong>
                     </li>
+                    <li class="category-total" data-category="contas">
+                        <span>Contas de casa</span><strong data-category-total="contas">R$ 0,00</strong>
+                    </li>
                 </ul>
             </section>
         </aside>
@@ -54,7 +72,7 @@
                     <span class="eyebrow">Seu resumo financeiro</span>
                     <h2>Adicionar uma despesa</h2>
                 </div>
-                <span class="status-dot" aria-label="Dados armazenados neste dispositivo">Salvo neste dispositivo</span>
+                <span class="status-dot" aria-label="Dados armazenados neste dispositivo">Salvo até você excluir</span>
             </header>
 
             <section class="form-card" aria-labelledby="formulario-titulo">
@@ -62,7 +80,7 @@
                     <div class="card-icon" aria-hidden="true">+</div>
                     <div>
                         <h3 id="formulario-titulo">Nova despesa</h3>
-                        <p>Registre um gasto para atualizar seu resumo.</p>
+                        <p>Registre um gasto. Ele continuará salvo neste dispositivo até você excluí-lo.</p>
                     </div>
                 </div>
 
@@ -75,8 +93,9 @@
                         </label>
                         <label class="field">
                             <span>Valor</span>
-                            <div class="input-prefix"><span>R$</span><input id="valor" name="valor" type="number"
-                                    min="0.01" step="0.01" placeholder="0,00" required /></div>
+                            <div class="input-prefix"><span>R$</span><input id="valor" name="valor" type="text"
+                                    inputmode="decimal" pattern="[0-9]+([,.][0-9]{1,2})?" placeholder="0,00"
+                                    autocomplete="off" aria-describedby="mensagem-erro" required /></div>
                         </label>
                         <label class="field">
                             <span>Categoria</span>
@@ -87,6 +106,7 @@
                                 <option value="lazer">Lazer</option>
                                 <option value="saúde">Saúde</option>
                                 <option value="outros">Outros</option>
+                                <option value="contas">Contas de casa</option>
                             </select>
                         </label>
                     </div>
