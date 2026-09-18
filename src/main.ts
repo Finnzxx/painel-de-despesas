@@ -2,7 +2,9 @@ import './style.css';
 import { categorias, type Categoria, type Despesa } from './types';
 
 const chaveArmazenamento = 'painel-de-despesas';
+const chaveSalario = 'painel-de-despesas-salario';
 let despesas: Despesa[] = carregarDespesas();
+let salario = carregarSalario();
 const moeda = new Intl.NumberFormat('pt-BR', {
     style: 'currency',
     currency: 'BRL',
@@ -15,6 +17,8 @@ const categoriaInput = document.getElementById('categoria') as HTMLSelectElement
 const lista = document.getElementById('lista-despesas') as HTMLUListElement;
 const listaVazia = document.getElementById('lista-vazia') as HTMLParagraphElement;
 const totalGeral = document.getElementById('total-geral') as HTMLElement;
+const salarioInput = document.getElementById('salario') as HTMLInputElement;
+const saldoDisponivel = document.getElementById('saldo-disponivel') as HTMLElement;
 const contadorDespesas = document.getElementById('contador-despesas') as HTMLElement;
 const mensagemErro = document.getElementById('mensagem-erro') as HTMLElement;
 const atualizarListaButton = document.getElementById('atualizar-lista') as HTMLButtonElement;
@@ -29,6 +33,11 @@ function gerarId(): string {
 
 function categoriaValida(valor: string): valor is Categoria {
     return categorias.includes(valor as Categoria);
+}
+
+function carregarSalario(): number {
+    const valorSalvo = Number(localStorage.getItem(chaveSalario));
+    return Number.isFinite(valorSalvo) && valorSalvo >= 0 ? valorSalvo : 0;
 }
 
 function carregarDespesas(): Despesa[] {
@@ -67,6 +76,15 @@ function salvarDespesas(): void {
     localStorage.setItem(chaveArmazenamento, JSON.stringify(despesas));
 }
 
+function salvarSalario(): void {
+    localStorage.setItem(chaveSalario, String(salario));
+}
+
+function salvarTudo(): void {
+    salvarDespesas();
+    salvarSalario();
+}
+
 function obterTotaisPorCategoria(): Record<Categoria, number> {
     const totais = Object.fromEntries(categorias.map((categoria) => [categoria, 0])) as Record<Categoria, number>;
 
@@ -82,8 +100,11 @@ function obterTotaisPorCategoria(): Record<Categoria, number> {
 function atualizarResumo(): void {
     const total = despesas.reduce((soma, despesa) => soma + (despesa.pago ? 0 : despesa.valor), 0);
     const totaisPorCategoria = obterTotaisPorCategoria();
+    const saldo = salario - total;
 
     totalGeral.textContent = formatarMoeda(total);
+    saldoDisponivel.textContent = formatarMoeda(saldo);
+    saldoDisponivel.classList.toggle('balance-negative', saldo < 0);
     const despesasPendentes = despesas.filter((despesa) => !despesa.pago).length;
     contadorDespesas.textContent = `${despesas.length} ${despesas.length === 1 ? 'despesa' : 'despesas'} · ${despesasPendentes} em aberto`;
 
@@ -151,6 +172,26 @@ function mostrarErro(mensagem: string): void {
 function limparErro(): void {
     mensagemErro.textContent = '';
     mensagemErro.hidden = true;
+    tituloInput.removeAttribute('aria-invalid');
+    valorInput.removeAttribute('aria-invalid');
+    categoriaInput.removeAttribute('aria-invalid');
+}
+
+function focarCampoComErro(campo: HTMLInputElement | HTMLSelectElement, mensagem: string): void {
+    mostrarErro(mensagem);
+    campo.setAttribute('aria-invalid', 'true');
+    campo.focus();
+}
+
+function converterValorDespesa(valorDigitado: string): number | null {
+    const valorLimpo = valorDigitado.trim();
+
+    if (!/^\d+(?:[.,]\d{1,2})?$/.test(valorLimpo)) {
+        return null;
+    }
+
+    const valor = Number(valorLimpo.replace(',', '.'));
+    return Number.isFinite(valor) ? valor : null;
 }
 
 form.addEventListener('submit', (evento) => {
@@ -158,24 +199,37 @@ form.addEventListener('submit', (evento) => {
     limparErro();
 
     const titulo = tituloInput.value.trim();
-    const valor = Number(valorInput.value);
+    const valorDigitado = valorInput.value.trim();
+    const valor = converterValorDespesa(valorDigitado);
     const categoria = categoriaInput.value;
 
     if (!titulo) {
-        mostrarErro('Informe um título para a despesa.');
-        tituloInput.focus();
+        focarCampoComErro(tituloInput, 'Digite um nome para a despesa, como “Mercado” ou “Internet”.');
         return;
     }
 
-    if (!Number.isFinite(valor) || valor <= 0) {
-        mostrarErro('Informe um valor maior que zero.');
-        valorInput.focus();
+    if (!/\p{L}/u.test(titulo)) {
+        focarCampoComErro(tituloInput, 'O nome da despesa precisa ser um texto, não apenas números.');
+        return;
+    }
+
+    if (!valorDigitado) {
+        focarCampoComErro(valorInput, 'Digite o valor da despesa usando apenas números.');
+        return;
+    }
+
+    if (valor === null) {
+        focarCampoComErro(valorInput, 'O valor deve conter apenas números. Exemplo: 49,90.');
+        return;
+    }
+
+    if (valor <= 0) {
+        focarCampoComErro(valorInput, 'Digite um valor maior que zero. Exemplo: 10,00.');
         return;
     }
 
     if (!categoriaValida(categoria)) {
-        mostrarErro('Selecione uma categoria.');
-        categoriaInput.focus();
+        focarCampoComErro(categoriaInput, 'Escolha uma categoria para continuar.');
         return;
     }
 
@@ -185,6 +239,10 @@ form.addEventListener('submit', (evento) => {
     atualizarResumo();
     form.reset();
     tituloInput.focus();
+});
+
+[tituloInput, valorInput, categoriaInput].forEach((campo) => {
+    campo.addEventListener('input', limparErro);
 });
 
 lista.addEventListener('click', (evento) => {
@@ -217,11 +275,30 @@ lista.addEventListener('click', (evento) => {
     atualizarResumo();
 });
 
+salarioInput.addEventListener('input', () => {
+    const valor = Number(salarioInput.value);
+    salario = Number.isFinite(valor) && valor >= 0 ? valor : 0;
+    salvarSalario();
+    atualizarResumo();
+});
+
 atualizarListaButton.addEventListener('click', () => {
     despesas = carregarDespesas();
+    salario = carregarSalario();
+    salarioInput.value = salario > 0 ? String(salario) : '';
     atualizarLista();
     atualizarResumo();
 });
 
+window.addEventListener('pagehide', salvarTudo);
+
+document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') {
+        salvarTudo();
+    }
+});
+
 atualizarLista();
+salarioInput.value = salario > 0 ? String(salario) : '';
+salvarTudo();
 atualizarResumo();
