@@ -143,11 +143,15 @@
         <button id="fechar-privacidade" class="privacy-popup-close" type="button"
             aria-label="Fechar aviso de privacidade">×</button>
     </aside>
-    <div id="online-presence" class="online-presence" role="status" aria-live="polite"
-        title="Contagem anônima de pessoas com esta página aberta">
-        <span class="online-presence-dot" aria-hidden="true"></span>
-        <span id="online-presence-text">Conectando contador...</span>
-    </div>
+    <footer class="site-footer">
+        <div class="credits">Criador do Sistema <a href="https://www.instagram.com/juann.felipehzz/"
+                target="_blank" rel="noopener noreferrer">JuanDEV</a></div>
+        <div id="online-presence" class="online-presence" role="status" aria-live="polite"
+            title="Contagem anônima de pessoas com esta página aberta">
+            <span class="online-presence-dot" aria-hidden="true"></span>
+            <span id="online-presence-text">Conectando contador...</span>
+        </div>
+    </footer>
     <script>
         window.now4real = window.now4real || {};
         now4real.config = { target: 'api' };
@@ -155,7 +159,8 @@
             now4real.subscribe('COUNTER_PAGE_VIEWERS', function (update) {
                 var total = Math.max(1, Math.round(update.data.value));
                 var texto = total === 1 ? '1 pessoa online' : total + ' pessoas online';
-                document.getElementById('online-presence-text').textContent = texto;
+                if (total <= 4)
+                    document.getElementById('online-presence-text').textContent = texto;
                 document.getElementById('online-presence').classList.remove('is-unavailable');
             });
         };
@@ -170,7 +175,7 @@
             document.head.appendChild(script);
         })();
     </script>
-    <script type="module" src="/src/main.ts"></script>
+    <script type="module" src="/src/main.js" defer></script>
 </body>
 
 </html>
