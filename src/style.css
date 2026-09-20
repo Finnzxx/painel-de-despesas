@@ -26,7 +26,7 @@ body {
 .privacy-popup {
     position: fixed;
     right: 24px;
-    bottom: 24px;
+    bottom: 58px;
     z-index: 10;
     display: flex;
     align-items: flex-start;
@@ -62,6 +62,38 @@ body {
 
 .privacy-popup-close:hover {
     color: #ffd8d3;
+}
+
+.online-presence {
+    position: fixed;
+    left: 50%;
+    bottom: 0;
+    z-index: 11;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-width: 190px;
+    padding: 9px 16px;
+    background: var(--green-dark);
+    color: #fff;
+    box-shadow: 0 -6px 20px rgba(32, 73, 54, .18);
+    font-size: .78rem;
+    font-weight: 800;
+    transform: translateX(-50%);
+}
+
+.online-presence-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #72d287;
+    box-shadow: 0 0 0 4px rgba(114, 210, 135, .16);
+}
+
+.online-presence.is-unavailable .online-presence-dot {
+    background: #eabf55;
+    box-shadow: 0 0 0 4px rgba(234, 191, 85, .16);
 }
 
 @keyframes privacy-popup-entry {
@@ -575,8 +607,12 @@ input::placeholder {
 
     .privacy-popup {
         right: 16px;
-        bottom: 16px;
+        bottom: 54px;
         width: calc(100vw - 32px);
+    }
+
+    .online-presence {
+        width: 100%;
     }
 
     .content-header {

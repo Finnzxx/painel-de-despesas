@@ -25,7 +25,6 @@ const mensagemErro = document.getElementById('mensagem-erro') as HTMLElement;
 const atualizarListaButton = document.getElementById('atualizar-lista') as HTMLButtonElement;
 const privacidadePopup = document.getElementById('privacidade-popup') as HTMLElement;
 const fecharPrivacidadeButton = document.getElementById('fechar-privacidade') as HTMLButtonElement;
-
 function mostrarAvisoPrivacidade(): void {
     privacidadePopup.hidden = false;
 }
@@ -290,11 +289,22 @@ salarioInput.addEventListener('input', () => {
 });
 
 atualizarListaButton.addEventListener('click', () => {
-    despesas = carregarDespesas();
-    salario = carregarSalario();
-    salarioInput.value = salario > 0 ? String(salario) : '';
+    if (despesas.length === 0) {
+        mostrarErro('Não há despesas para apagar.');
+        return;
+    }
+
+    const confirmarExclusao = window.confirm('Apagar todas as suas despesas? Esta ação não pode ser desfeita.');
+
+    if (!confirmarExclusao) {
+        return;
+    }
+
+    despesas = [];
+    salvarDespesas();
     atualizarLista();
     atualizarResumo();
+    limparErro();
 });
 
 window.addEventListener('pagehide', salvarTudo);
