@@ -561,6 +561,11 @@ input::placeholder {
     color: #6c655b;
 }
 
+.category-contas-pessoais {
+    background: #f4dedd;
+    color: #8a4039;
+}
+
 .expense-value {
     color: var(--green);
     font-size: 1rem;

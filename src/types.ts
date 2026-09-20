@@ -1,4 +1,4 @@
-export type Categoria = 'alimento' | 'transporte' | 'lazer' | 'saúde' | 'outros';
+export type Categoria = 'alimento' | 'transporte' | 'lazer' | 'saúde' | 'outros' | 'contas' | 'contas-pessoais';
 
 export type Despesa = {
     id: string;
@@ -14,4 +14,6 @@ export const categorias: Categoria[] = [
     'lazer',
     'saúde',
     'outros',
+    'contas',
+    'contas-pessoais',
 ];
