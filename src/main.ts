@@ -3,6 +3,7 @@ import { categorias, type Categoria, type Despesa } from './types';
 
 const chaveArmazenamento = 'painel-de-despesas';
 const chaveSalario = 'painel-de-despesas-salario';
+const intervaloAvisoPrivacidade = 10 * 60 * 1000;
 let despesas: Despesa[] = carregarDespesas();
 let salario = carregarSalario();
 const moeda = new Intl.NumberFormat('pt-BR', {
@@ -22,6 +23,12 @@ const saldoDisponivel = document.getElementById('saldo-disponivel') as HTMLEleme
 const contadorDespesas = document.getElementById('contador-despesas') as HTMLElement;
 const mensagemErro = document.getElementById('mensagem-erro') as HTMLElement;
 const atualizarListaButton = document.getElementById('atualizar-lista') as HTMLButtonElement;
+const privacidadePopup = document.getElementById('privacidade-popup') as HTMLElement;
+const fecharPrivacidadeButton = document.getElementById('fechar-privacidade') as HTMLButtonElement;
+
+function mostrarAvisoPrivacidade(): void {
+    privacidadePopup.hidden = false;
+}
 
 function formatarMoeda(valor: number): string {
     return moeda.format(valor);
@@ -292,6 +299,10 @@ atualizarListaButton.addEventListener('click', () => {
 
 window.addEventListener('pagehide', salvarTudo);
 
+fecharPrivacidadeButton.addEventListener('click', () => {
+    privacidadePopup.hidden = true;
+});
+
 document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'hidden') {
         salvarTudo();
@@ -302,3 +313,5 @@ atualizarLista();
 salarioInput.value = salario > 0 ? String(salario) : '';
 salvarTudo();
 atualizarResumo();
+mostrarAvisoPrivacidade();
+window.setInterval(mostrarAvisoPrivacidade, intervaloAvisoPrivacidade);

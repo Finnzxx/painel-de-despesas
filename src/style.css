@@ -23,6 +23,59 @@ body {
     min-width: 320px;
 }
 
+.privacy-popup {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 10;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    width: min(420px, calc(100vw - 32px));
+    padding: 18px 18px 18px 20px;
+    background: #b42318;
+    color: #fff;
+    box-shadow: 0 14px 32px rgba(71, 20, 15, .25);
+    animation: privacy-popup-entry .25s ease-out;
+}
+
+.privacy-popup[hidden] {
+    display: none;
+}
+
+.privacy-popup p {
+    margin: 0;
+    font-size: .88rem;
+    line-height: 1.5;
+}
+
+.privacy-popup-close {
+    flex: 0 0 auto;
+    border: 0;
+    background: transparent;
+    color: #fff;
+    cursor: pointer;
+    font-size: 1.5rem;
+    line-height: 1;
+    padding: 0;
+}
+
+.privacy-popup-close:hover {
+    color: #ffd8d3;
+}
+
+@keyframes privacy-popup-entry {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 button,
 input,
 select {
@@ -94,6 +147,43 @@ select {
     font-size: clamp(2.1rem, 4vw, 3.65rem);
     letter-spacing: -.06em;
     margin-top: 10px;
+}
+
+.salary-input-wrapper {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+    border-bottom: 1px solid #769182;
+}
+
+.salary-input-wrapper span {
+    color: #bdcec2;
+    font-size: .82rem;
+    font-weight: 700;
+}
+
+.salary-input-wrapper input {
+    min-width: 0;
+    border: 0;
+    background: transparent;
+    color: #fff;
+    padding: 7px 0 7px 8px;
+    font-size: 1.2rem;
+    outline: none;
+}
+
+.salary-input-wrapper input::placeholder {
+    color: #8da99a;
+}
+
+.salary-hint {
+    margin: 9px 0 0;
+    color: #a8bdb0;
+    font-size: .72rem;
+}
+
+.balance-negative {
+    color: #f2b3a8 !important;
 }
 
 .category-summary {
@@ -434,6 +524,11 @@ input::placeholder {
     color: #6c655b;
 }
 
+.category-contas {
+    background: #e8e4dc;
+    color: #6c655b;
+}
+
 .expense-value {
     color: var(--green);
     font-size: 1rem;
@@ -476,6 +571,12 @@ input::placeholder {
     .sidebar,
     .content {
         padding: 28px 20px;
+    }
+
+    .privacy-popup {
+        right: 16px;
+        bottom: 16px;
+        width: calc(100vw - 32px);
     }
 
     .content-header {
